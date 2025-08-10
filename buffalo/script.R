@@ -27,6 +27,9 @@ bars <- read_csv("data/bars.csv") %>%
     crs = st_crs("EPSG:4269")
   )
 
+barIsInBuffalo <- lengths(st_intersects(bars, neighborhoods)) > 0
+bars <- bars[barIsInBuffalo,]
+
 map <- ggplot() +
   geom_sf(
     data = neighborhoods
@@ -66,7 +69,70 @@ countmap <- ggplot() +
     low = "#ffffe0",
     mid = "#86754d",
     high = "#aa483d",
-    midpoint = 20
+    midpoint = 15
   )
 
 countmap
+
+roads <- read_csv("data/major_roads.csv") %>%
+  filter(!is.na(the_geom), the_geom != "") %>%
+  select(CompleteStreetName, the_geom) %>%
+  st_as_sf(
+    wkt = "the_geom",
+    crs = st_crs("EPSG:4269")
+  )
+
+barsandroads <- ggplot() +
+  geom_sf(
+    data = neighborhoods,
+    lwd = 0,
+    aes(fill = numBars)
+  ) +
+  scale_fill_gradient2(
+    low = "#ffffe0",
+    mid = "#86754d",
+    high = "#aa483d",
+    midpoint = 25
+  ) +
+  geom_sf(
+    data = roads,
+    color = "#333",
+    alpha = 0.6,
+    lwd = 0.15
+  ) +
+  labs(
+    title = "Buffalo's Bars"
+  ) +
+  theme_void()
+
+barsandroads
+
+heatmap <- ggplot() +
+  geom_sf(
+    data = neighborhoods
+  ) +
+  geom_sf(
+    data = bars,
+    stroke = .1,
+    alpha = 0.3
+  ) +
+  stat_density_2d(
+    aes(
+      x = st_coordinates(bars)[,1], 
+      y = st_coordinates(bars)[,2],
+      fill = ..level..
+    ),
+    alpha = 0.2,
+    geom = 'polygon',
+    color = NA
+  ) +
+  scale_fill_gradient2(
+    low = "#ffffe0",
+    mid = "#86754d",
+    high = "#aa483d",
+    guide = "none"
+    # midpoint = 100
+  ) +
+  theme_void()
+      
+heatmap
