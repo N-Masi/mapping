@@ -46,3 +46,27 @@ map <- ggplot() +
   theme_void()
 
 map
+
+intersection <- st_intersects(
+    x = neighborhoods,
+    y = bars
+  )
+
+neighborhoods <- mutate(
+    neighborhoods,
+    numBars = lengths(intersection)
+  )
+
+countmap <- ggplot() +
+  geom_sf(
+    data = neighborhoods,
+    aes(fill = numBars)
+  ) +
+  scale_fill_gradient2(
+    low = "#ffffe0",
+    mid = "#86754d",
+    high = "#aa483d",
+    midpoint = 20
+  )
+
+countmap
