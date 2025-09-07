@@ -1,4 +1,4 @@
-Made with RStudio, Numbers, & Inkscape
+Made with RStudio, Tidyverse, ggplot, Numbers, & Inkscape
 
 ### Data
 
