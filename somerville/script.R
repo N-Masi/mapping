@@ -1,14 +1,9 @@
 require(tidyverse)
 require(sf)
 
-# neighborhoods <- read_csv("data/neighborhoods.csv") %>%
-#   st_as_sf(
-#     wkt = "Geometry",
-#     crs = st_crs("EPSG:4269")
-#   )
+mass <- read_sf("data/towns")
 
-somerville_outline <- read_sf("data/towns") %>%
-  filter(TOWN == "SOMERVILLE")
+somerville_outline <- filter(mass, TOWN == "SOMERVILLE")
 
 somerville_precincts <- read_sf("data/wardsprecincts2022") %>%
   filter(TOWN == "SOMERVILLE")
@@ -25,3 +20,15 @@ precints_outline <- ggplot() +
 precints_outline
 
 # TODO: add names of precincts as text
+
+lighthouses <- read_sf("data/lighthouses")
+
+lights <- ggplot() +
+  geom_sf(
+    data = lighthouses
+  ) + 
+  geom_sf(
+    data = mass
+  )
+
+lights
